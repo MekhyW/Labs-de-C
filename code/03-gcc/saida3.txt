@@ -1,0 +1,19 @@
+Digite o primeiro : 
+Digite o segundo : 
+ 10 é múltiplo de 5 
+Digite o primeiro : 
+Digite o segundo : 
+ 2 não é múltiplo de 3 
+Digite o primeiro : 
+Digite o segundo : 
+ 5 não é múltiplo de 7 
+Digite o primeiro : 
+Digite o segundo : 
+ 9 não é múltiplo de 47579324 
+Digite o primeiro : 
+Digite o segundo : 
+ 85994309 não é múltiplo de 483 
+Digite o primeiro : 
+Digite o segundo : 
+ O segundo número não pode ser zero ! 
+ 0 não é múltiplo de 0 

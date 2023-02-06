@@ -7,16 +7,14 @@
 
 int main() {
     int s = 0;
-    int i;
+    long i = 1;
 
-    i = 1;
     while (i <= 10) {
         s += i / 2;
         i++;
     }
 
-    // TODO: corrija o código acima e use printf para
-    // mostrar a metade da soma de 1 a 10
+    printf("soma das metades = %d", s);
 
     return 0;
 }
