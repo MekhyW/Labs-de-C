@@ -12,7 +12,12 @@ int main(int argc, char *argv[]) {
 	long vetor[5];
 	int i;
 	
-	for(i = 0; i <= 5; i++) {
+	for(i = 0; i < 5; i++) {
+		printf("Digite um número: ");
+		scanf("%ld", &vetor[i]);
+	}
+
+	for(i = 0; i < 5; i++) {
 		if (vetor[i] % 2 == 0) {
 			printf("Par! ");
 		}

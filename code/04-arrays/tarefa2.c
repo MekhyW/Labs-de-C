@@ -7,6 +7,13 @@
 #include <stdio.h>
 
 /* TODO: implemente sua função soma aqui */
+double soma(double arr[], int n) {
+    double sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
 
 
 int main() {
