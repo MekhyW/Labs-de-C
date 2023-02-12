@@ -31,7 +31,9 @@ void escreve_imagem(imagem *img) {
     }
 }
 
-void limiar(imagem *img, imagem *limiar, int threshold) {
+void effect_limiar(imagem *img, imagem *limiar, int threshold) {
+    limiar->largura = img->largura;
+    limiar->altura = img->altura;
     for (int i = 0; i < img->altura; i++) {
         for (int j = 0; j < img->largura; j++) {
             if (img->matrix[i][j] >= threshold) {
@@ -43,78 +45,104 @@ void limiar(imagem *img, imagem *limiar, int threshold) {
     }
 }
 
-void crop(imagem *img, imagem *crop) {
-    int i, j;
-    int x, y;
-    int w, h;
-    scanf("%d %d %d %d", &x, &y, &w, &h);
+void effect_crop(imagem *img, imagem *crop, int w, int h) {
     crop->largura = w;
     crop->altura = h;
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
-            crop->matrix[i][j] = img->matrix[i + y][j + x];
+    for (int i = 0; i < img->altura; i++) {
+        for (int j = 0; j < img->largura; j++) {
+            if (i < h && j < w) {
+                crop->matrix[i][j] = img->matrix[i][j];
+            } else {
+                crop->matrix[i][j] = 0;
+            }
         }
     }
 }
 
-void blur(imagem *img, imagem *blur) {
-    int i, j;
-    int x, y;
-    int w, h;
-    int sum;
-    scanf("%d %d %d %d", &x, &y, &w, &h);
-    blur->largura = w;
-    blur->altura = h;
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+void effect_blur(imagem *img, imagem *blur) {
+    blur->largura = img->largura;
+    blur->altura = img->altura;
+    int sum, denominator;
+    for (int i = 0; i < img->altura; i++) {
+        for (int j = 0; j < img->largura; j++) {
             sum = 0;
-            sum += img->matrix[i + y - 1][j + x - 1];
-            sum += img->matrix[i + y - 1][j + x];
-            sum += img->matrix[i + y - 1][j + x + 1];
-            sum += img->matrix[i + y][j + x - 1];
-            sum += img->matrix[i + y][j + x];
-            sum += img->matrix[i + y][j + x + 1];
-            sum += img->matrix[i + y + 1][j + x - 1];
-            sum += img->matrix[i + y + 1][j + x];
-            sum += img->matrix[i + y + 1][j + x + 1];
-            blur->matrix[i][j] = sum / 9;
+            denominator = 0;
+            if (i > 0 && j > 0) {
+                sum += img->matrix[i - 1][j - 1];
+                denominator++;
+            }
+            if (i > 0) {
+                sum += img->matrix[i - 1][j];
+                denominator++;
+            }
+            if (i > 0 && j < img->largura - 1) {
+                sum += img->matrix[i - 1][j + 1];
+                denominator++;
+            }
+            if (j > 0) {
+                sum += img->matrix[i][j - 1];
+                denominator++;
+            }
+            sum += img->matrix[i][j];
+            denominator++;
+            blur->matrix[i][j] = sum / denominator;
         }
     }
 }
 
-void edge_detection(imagem *img, imagem *edge) {
-    int i, j;
-    int x, y;
-    int w, h;
-    int sum;
-    scanf("%d %d %d %d", &x, &y, &w, &h);
-    edge->largura = w;
-    edge->altura = h;
-    for (i = 0; i < h; i++) {
-        for (j = 0; j < w; j++) {
+void effect_edge_detection(imagem *img, imagem *edge) {
+    edge->largura = img->largura;
+    edge->altura = img->altura;
+    int sum, denominator;
+    for (int i = 0; i < img->altura; i++) {
+        for (int j = 0; j < img->largura; j++) {
             sum = 0;
-            sum += img->matrix[i + y - 1][j + x - 1] * -1;
-            sum += img->matrix[i + y - 1][j + x] * -1;
-            sum += img->matrix[i + y - 1][j + x + 1] * -1;
-            sum += img->matrix[i + y][j + x - 1] * -1;
-            sum += img->matrix[i + y][j + x] * 8;
-            sum += img->matrix[i + y][j + x + 1] * -1;
-            sum += img->matrix[i + y + 1][j + x - 1] * -1;
-            sum += img->matrix[i + y + 1][j + x] * -1;
-            sum += img->matrix[i + y + 1][j + x + 1] * -1;
-            edge->matrix[i][j] = sum;
+            denominator = 0;
+            if (i > 0 && j > 0) {
+                sum += img->matrix[i - 1][j - 1];
+                denominator++;
+            }
+            if (i > 0) {
+                sum += img->matrix[i - 1][j];
+                denominator++;
+            }
+            if (i > 0 && j < img->largura - 1) {
+                sum += img->matrix[i - 1][j + 1];
+                denominator++;
+            }
+            if (j > 0) {
+                sum += img->matrix[i][j - 1];
+                denominator++;
+            }
+            if (j < img->largura - 1) {
+                sum += img->matrix[i][j + 1];
+                denominator++;
+            }
+            if (i < img->altura - 1 && j > 0) {
+                sum += img->matrix[i + 1][j - 1];
+                denominator++;
+            }
+            if (i < img->altura - 1) {
+                sum += img->matrix[i + 1][j];
+                denominator++;
+            }
+            if (i < img->altura - 1 && j < img->largura - 1) {
+                sum += img->matrix[i + 1][j + 1];
+                denominator++;
+            }
+            edge->matrix[i][j] = abs(img->matrix[i][j] - sum / denominator);
         }
     }
 }
 
 int main() {
     imagem img, limiar, crop, blur, edge;
-    int threshold = 128;
     le_imagem(&img);
-    //limiar(&img, &limiar, threshold);
-    //crop(&img, &crop);
-    //blur(&img, &blur);
-    edge_detection(&img, &edge);
+    //effect_limiar(&img, &limiar, 128);
+    //effect_crop(&img, &crop, 50, 50);
+    //effect_blur(&img, &blur);
+    effect_edge_detection(&img, &edge);
+    //escreve_imagem(&img);
     //escreve_imagem(&limiar);
     //escreve_imagem(&crop);
     //escreve_imagem(&blur);
